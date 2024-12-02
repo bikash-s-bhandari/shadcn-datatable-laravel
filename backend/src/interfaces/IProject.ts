@@ -9,4 +9,5 @@ export default interface IProject extends IBase {
   resources: string[];
   estimated_cost: number;
   last_updated: Date;
+  last_updated_note: string;
 }

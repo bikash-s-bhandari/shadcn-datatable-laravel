@@ -69,6 +69,7 @@ const seedDatabase = async () => {
           ),
           estimated_cost: simpleFaker.number.int(1000000),
           last_updated: faker.date.recent(),
+          last_updated_note: faker.hacker.phrase(),
         });
 
         await project.save();

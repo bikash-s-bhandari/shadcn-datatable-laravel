@@ -44,6 +44,9 @@ export default class Project extends BaseEntity implements IProject {
   @Column({ type: "date" })
   last_updated!: Date;
 
+  @Column({ type: "text", default: "" })
+  last_updated_note!: string;
+
   @CreateDateColumn({ select: false })
   created_at!: Date;
 

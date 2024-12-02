@@ -12,6 +12,8 @@ const { BAD_REQUEST, CREATED, OK, NOT_FOUND, CONFLICT, INTERNAL_SERVER_ERROR } =
 //@access Public
 export const list = async (req: Request, res: Response) => {
   try {
+    //TODOS: Add pagination, sorting, search by name, project name
+
     const projects = await Project.createQueryBuilder("project").getMany();
 
     res.status(OK).json({
