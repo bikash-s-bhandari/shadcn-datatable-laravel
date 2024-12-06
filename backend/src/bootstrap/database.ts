@@ -5,8 +5,6 @@ import { DataSource } from "typeorm";
 import Entities from "../entity";
 import seedDatabase from "./seed-database";
 
-console.log("process.env.DATABASE_URL", process.env.DATABASE_URL);
-
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,

@@ -74,10 +74,13 @@ export const columns: ColumnDef<Project>[] = [
   },
   {
     accessorKey: "last_updated",
-    header: "Last Update",
+    header: ({ column }) => (
+      <SortableHeader column={column} title="Last updated" />
+    ),
     cell: ({ row }) => (
       <ProjectLastUpdate date={row.getValue("last_updated")} />
     ),
+    enableSorting: true,
   },
   {
     accessorKey: "resources",
