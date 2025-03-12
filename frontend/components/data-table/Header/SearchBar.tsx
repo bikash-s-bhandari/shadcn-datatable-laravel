@@ -7,8 +7,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, FilterIcon, SearchIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
 
 const SearchBar = () => {
+  const [searchQuery, setSearchQuery] = useQueryState("searchQuery", {
+    defaultValue: "",
+    throttleMs:1000//add debounce
+  });
+  
   return (
     <div className="flex flex-row items-center h-9 rounded-lg shadow-sm">
       <DropdownMenu>
@@ -29,6 +35,8 @@ const SearchBar = () => {
       <div className="flex flex-row items-center rounded-r-lg border border-l-0 h-full relative">
         <SearchIcon className="w-4 h-4 ml-2 absolute text-gray-400" />
         <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
           placeholder="Search..."
           className="h-full py-0 px-3 border-none text-sm w-72 rounded-r-lg pl-8"

@@ -64,7 +64,7 @@ export const columns: ColumnDef<Project>[] = [
     accessorKey: "project_manager",
     header: "PM",
     cell: ({ row }) => (
-      <ProjectManager name={row.getValue("project_manager")} />
+      <ProjectManager projectManager={row.original.project_manager} />
     ),
   },
   {
@@ -78,7 +78,7 @@ export const columns: ColumnDef<Project>[] = [
       <SortableHeader column={column} title="Last updated" />
     ),
     cell: ({ row }) => (
-      <ProjectLastUpdate date={row.getValue("last_updated")} />
+      <ProjectLastUpdate date={row.getValue("last_updated")} last_updated_note={row.original.last_updated_note} />
     ),
     enableSorting: true,
   },

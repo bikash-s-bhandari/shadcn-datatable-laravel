@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TabItem from "./TabItem";
+import { ColumnFiltersState } from "@tanstack/react-table";
 
 export interface IItem {
   index: number;
@@ -48,8 +49,37 @@ const items: IItem[] = [
   },
 ];
 
-const TableTabs = () => {
+const TableTabs = ({
+  filters,
+  setFilters,
+  counts = {
+    archived: 0,
+    onTrack: 0,
+    onHold: 0,
+    potentialRisk: 0,
+    risk: 0,
+  },
+}: {
+  filters: ColumnFiltersState;
+  setFilters: OnChangeFn<ColumnFiltersState>;
+  counts: {
+    archived: number;
+    onTrack: number;
+    onHold: number;
+    potentialRisk: number;
+    risk: number;
+  };
+}) => {
   const [activeTab, setActiveTab] = useState<IItem["value"]>("all");
+
+  useEffect(() => {
+    const otherFilters = filters.filter((item) => item.id !== "status");
+    if (otherFilters.length === 0) {
+      setFilters([{ id: "status", value: activeTab }]);
+    } else {
+      setFilters([...otherFilters, { id: "status", value: activeTab }]);
+    }
+  }, [activeTab]);
   return (
     <div className="flex flex-row items-center gap-5 px-5">
       {items.map((item) => (
@@ -58,6 +88,7 @@ const TableTabs = () => {
           item={item}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
+          counts={counts}
         />
       ))}
     </div>

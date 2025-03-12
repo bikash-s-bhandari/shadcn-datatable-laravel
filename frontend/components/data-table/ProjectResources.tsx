@@ -7,11 +7,13 @@ import {
 import { Arrow } from "@radix-ui/react-tooltip";
 
 const ProjectResources = ({ resources }: { resources: string[] }) => {
+  
   return (
     <TooltipProvider>
       <Tooltip delayDuration={100}>
         <TooltipTrigger>
           <div className="bg-gray-200 h-7 w-7 items-center justify-center flex rounded-md">
+           
             {resources.length}
           </div>
         </TooltipTrigger>
@@ -24,6 +26,8 @@ const ProjectResources = ({ resources }: { resources: string[] }) => {
                 {resource}
               </p>
             ))}
+
+            
           </div>
         </TooltipContent>
       </Tooltip>

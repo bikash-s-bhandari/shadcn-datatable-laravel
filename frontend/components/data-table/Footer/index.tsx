@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Pagination } from "./Pagination";
 
 export function TableFooter<TData>({ table }: { table: Table<TData> }) {
   return (
@@ -40,6 +41,7 @@ export function TableFooter<TData>({ table }: { table: Table<TData> }) {
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
+        <Pagination table={table}/>
       </div>
     </div>
   );

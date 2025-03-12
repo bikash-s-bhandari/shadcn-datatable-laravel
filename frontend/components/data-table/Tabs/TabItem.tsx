@@ -9,10 +9,24 @@ const TabItem = ({
   item,
   activeTab,
   setActiveTab,
+  counts = {
+    archived: 0,
+    onTrack: 0,
+    onHold: 0,
+    potentialRisk: 0,
+    risk: 0,
+  },
 }: {
   item: IItem;
   activeTab: IItem["value"];
   setActiveTab: (value: IItem["value"]) => void;
+  counts: {
+    archived: number;
+    onTrack: number;
+    onHold: number;
+    potentialRisk: number;
+    risk: number;
+  };
 }) => {
   const { label, value, number } = item;
 
