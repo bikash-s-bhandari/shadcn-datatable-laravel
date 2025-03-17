@@ -19,6 +19,7 @@ import TableTabs from "./Tabs";
 import TableHeader from "./TableHeader";
 import { TableFooter } from "./Footer";
 import BeatLoader from "react-spinners/BeatLoader";
+import DataTablePagination from "./Footer/Pagination2";
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -141,6 +142,12 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      {/* <DataTablePagination
+      table={table}
+      totalRows={totalCount}
+      pageSizeOptions={[20,40,60,100]}
+
+      /> */}
       <TableFooter table={table} />
     </div>
   );

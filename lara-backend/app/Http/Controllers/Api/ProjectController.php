@@ -45,12 +45,21 @@ class ProjectController extends Controller
                 'pageSize' => 10
             ]);
             $sorting = $request->input('sorting', []);
+            $filters = $request->input('filters', []);
 
             // Build the query
             $query = Project::query()
                 ->with('projectManager:id,name,email')
                 ->leftJoin('project_managers as pm', 'projects.project_manager_id', '=', 'pm.id')
                 ->select('projects.*', 'pm.name as project_manager_name');
+
+                // Apply filters
+            foreach ($filters as $filter) {
+                if ($filter['id'] === 'status') {
+                    $query->where('projects.status', $filter['value']);
+                }
+            }
+
 
             // Search functionality
             if (!empty($searchQuery)) {
