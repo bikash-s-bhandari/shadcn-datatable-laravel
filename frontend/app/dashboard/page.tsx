@@ -3,15 +3,16 @@
 import React from "react";
 import { DataTable } from "@/components/data-table";
 import TopHeader from "@/components/data-table/Header";
-
-import { columns } from "./columns";
+import { columns } from "../columns";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectService } from "@/services";
 import { useQueryState } from "nuqs";
 import { ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDebounce } from 'use-debounce';
 
+
 const IndexPage = () => {
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageSize: 10,

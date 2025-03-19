@@ -1,5 +1,5 @@
 import { ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
-import api from "./api";
+import myAxios from "@/lib/axios.config";
 
 const getProjects = async ({
   searchQuery,
@@ -12,7 +12,7 @@ const getProjects = async ({
   pagination:PaginationState,
   filters:ColumnFiltersState
 }) => {
-  const response = await api.post("/projects", { searchQuery, sorting,pagination,filters });
+  const response = await myAxios.post("/projects", { searchQuery, sorting,pagination,filters });
   return response.data;
 };
 
