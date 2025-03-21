@@ -14,6 +14,7 @@ export interface CustomSession {
 export interface CustomUser {
   id?: string | null;
   name?: string | null;
+  role?:string;
   email?: string | null;
   token?: string | null; // Sanctum token
   created_at?: string | null;
@@ -34,6 +35,7 @@ export const authOptions: AuthOptions = {
         token.user = {
           id: user.id,
           name: user.name,
+          role:user.role,
           email: user.email,
           token: user.token, // Store the Sanctum token here
           created_at: user.created_at,
@@ -82,6 +84,7 @@ export const authOptions: AuthOptions = {
             return {
               id: user.id.toString(), // Ensure ID is a string for Next-Auth
               name: user.name,
+              role:user.role,
               email: user.email,
               token: user.token, // Pass the Sanctum token
               created_at: user.created_at,

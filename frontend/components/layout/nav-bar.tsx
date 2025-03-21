@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,8 @@ import { LOGOUT_URL } from "@/lib/apiEndpoints";
 import myAxios from "@/lib/axios.config";
 
 export default function Header() {
+  const { data } = useSession();
+  console.log({ data });
   const user = {
     name: "padam khanal",
     role: "manager",
@@ -20,9 +22,6 @@ export default function Header() {
     name: "bikash",
     role: "admin",
   };
-
-  const { data } = useSession();
-
 
   const onLogout = async () => {
     myAxios
@@ -35,19 +34,11 @@ export default function Header() {
           },
         }
       )
-      .then((res) => {
-        signOut({
-          callbackUrl: "/login",
-          redirect: true,
-        });
-      })
+      .then((res) => {})
       .catch((err) => {
         console.error("Something went wrong.Please try again!");
       });
   };
-
-
-
 
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-md">
@@ -57,17 +48,17 @@ export default function Header() {
           <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
             <Avatar>
               <AvatarFallback>
-                {user?.name?.charAt(0).toUpperCase()}
+                {data?.user?.name?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <span>
-              {user.name} ({user.role})
+              {data?.user?.name} ({data?.user?.role})
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white text-black p-2 rounded-md shadow-lg">
             {originalUser && originalUser.name !== user.name && (
               <DropdownMenuItem className="cursor-default">
-                Logged in as {user.name}
+                Logged in as {data?.user?.name}
               </DropdownMenuItem>
             )}
             {originalUser && (
@@ -75,7 +66,12 @@ export default function Header() {
                 Original: {originalUser.name}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="text-red-600 cursor-pointer" onClick={() => onLogout()}>Logout</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-600 cursor-pointer"
+              onClick={() => onLogout()}
+            >
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

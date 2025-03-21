@@ -5,3 +5,5 @@ export const LOGIN_URL = "/auth/login";
 export const REGISTER_URL = "/auth/register";
 export const CHECK_CREDENTIALS = "/auth/checkCredentials";
 export const LOGOUT_URL = "/auth/logout";
+
+export const MANAGER_LIST_URL = "/managers";
