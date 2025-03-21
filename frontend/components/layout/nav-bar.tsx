@@ -58,9 +58,17 @@ export default function Header() {
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white text-black p-2 rounded-md shadow-lg">
-            {data?.user?.isImpersonating && (
+            {data?.isImpersonating && (
               <DropdownMenuItem className="cursor-default">
                 Logged in as {data?.user?.name}
+              </DropdownMenuItem>
+            )}
+            {data?.isImpersonating && (
+              <DropdownMenuItem
+                onClick={() => handleStopImpersonation()}
+                className="cursor-default"
+              >
+                Stop Impersonating
               </DropdownMenuItem>
             )}
             {data?.originalUser && (

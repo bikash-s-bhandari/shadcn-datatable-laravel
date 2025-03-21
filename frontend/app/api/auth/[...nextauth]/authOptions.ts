@@ -15,6 +15,7 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+     
       if (user) {
         return {
           ...token,
@@ -25,7 +26,9 @@ export const authOptions: AuthOptions = {
           originalUser: user.originalUser,
         };
       }
+    
       if (trigger === "update" && session?.accessToken) {
+        
         return { ...token, ...session };
       }
       return token;

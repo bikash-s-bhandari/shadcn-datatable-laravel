@@ -16,6 +16,8 @@ export default function Dashboard() {
     }
   }, [status, router]);
 
+  console.log({data})
+
   // Show loading state while session is being fetched
   if (status === "loading") {
     return <div>Loading...</div>;
