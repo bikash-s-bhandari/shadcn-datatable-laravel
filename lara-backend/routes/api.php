@@ -20,13 +20,33 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::prefix('impersonate')->group(function () {
-    Route::post('/start', [ImpersonationController::class, 'start'])
-        ->middleware(['auth:sanctum', 'admin']);
+// Protected example route
+// Route::middleware('auth:sanctum')->get('/projects', function (Request $request) {
+//     if ($request->user()->currentAccessToken()->can('manager:access')) {
+//         return $request->user()->projects;
+//     }
 
-    Route::post('/stop', [ImpersonationController::class, 'stop'])
-        ->middleware(['auth:sanctum', 'impersonate']);
+//     return response()->json(['message' => 'Unauthorized'], 403);
+// });
+
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('/check', [AuthController::class, 'checkAuth'])->middleware('auth:sanctum');
 });
+
+
+
+
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('impersonate')->group(function () {
+    Route::post('/start', [ImpersonationController::class, 'start']);
+    Route::post('/stop', [ImpersonationController::class, 'stop']);
+});
+
+
+
+
 
 Route::post("/auth/login", [AuthController::class, 'login']);
 Route::post("/auth/register", [AuthController::class, 'register']);

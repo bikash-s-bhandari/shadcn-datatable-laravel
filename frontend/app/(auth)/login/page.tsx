@@ -5,12 +5,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,12 +27,25 @@ export default function LoginPage() {
     // Simulate login API call (replace with your actual auth logic)
     try {
       setLoading(true);
-      await signIn("credentials", {
-        email: email,
-        password: password,
-        redirect: true,
-        callbackUrl: "/dashboard",
+      // await signIn("credentials", {
+      //   email: email,
+      //   password: password,
+      //   redirect: true,
+      //   callbackUrl: "/dashboard",
+      // });
+
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
       });
+
+      if (result?.error) {
+        setError("Invalid credentials");
+      } else {
+        router.push("/dashboard");
+      }
+
       setLoading(false);
     } catch (err) {
       setLoading(false);

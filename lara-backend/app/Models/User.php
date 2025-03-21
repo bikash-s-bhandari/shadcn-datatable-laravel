@@ -76,4 +76,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class,'user_id','id');
     }
+
+    public function logAdminAccess(): void
+    {
+        if ($this->isAdmin()) {
+            $this->update(['last_admin_access' => now()]);
+        }
+    }
 }
