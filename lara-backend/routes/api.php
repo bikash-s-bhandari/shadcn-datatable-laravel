@@ -39,9 +39,12 @@ Route::prefix('auth')->group(function () {
 
 
 
-Route::middleware(['auth:sanctum', 'admin'])->prefix('impersonate')->group(function () {
-    Route::post('/start', [ImpersonationController::class, 'start']);
-    Route::post('/stop', [ImpersonationController::class, 'stop']);
+Route::middleware(['auth:sanctum'])->prefix('impersonate')->group(function () {
+    Route::post('/start', [ImpersonationController::class, 'start'])
+        ->middleware(['auth:sanctum', 'admin']); // Only for admin
+
+    Route::post('/stop', [ImpersonationController::class, 'stop'])
+        ->middleware(['auth:sanctum', 'impersonate']); // For impersonated users
 });
 
 

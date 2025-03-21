@@ -21,45 +21,49 @@ class ImpersonationController extends Controller
             ], 403);
         }
 
+        // Store impersonation state in session
+        // $request->session()->put('impersonation', [
+        //     'admin_id' => $request->user()->id,
+        //     'manager_id' => $manager->id,
+        //     'started_at' => now(),
+        // ]);
+
         // Create impersonation token with limited scope
         $token = $manager->createToken('impersonation-token', [
             'impersonated',
             'manager:access'
         ])->plainTextToken;
 
-        // Log the impersonation
-        // Impersonation::create([
-        //     'admin_id' => $request->user()->id,
-        //     'manager_id' => $manager->id,
-        //     'impersonated_at' => now(),
-        // ]);
+
+
 
         return response()->json([
             'token' => $token,
-            'manager' => $manager->only('id', 'name', 'email'),
+            'manager' => $manager->only('id', 'name', 'email', 'role'),
         ]);
     }
 
     public function stop(Request $request)
     {
-        $impersonation = Impersonation::where('admin_id', $request->user()->id)
-            ->whereNull('left_at')
-            ->latest()
-            ->firstOrFail();
+        $impersonation = $request->session()->get('impersonation');
 
-        // Restore admin token
-        $admin = User::find($impersonation->admin_id);
-        $token = $admin->createToken('auth-token', [
-            'admin',
-            'basic-access'
-        ])->plainTextToken;
+        if (!$impersonation) {
+            abort(403, 'No active impersonation session');
+        }
 
-        $impersonation->update(['left_at' => now()]);
+        // Get original admin user
+        $admin = User::findOrFail($impersonation['admin_id']);
+
+        // Clear impersonation session
+        $request->session()->forget('impersonation');
+
+        // Create new admin token
+        $token = $admin->createToken('admin-token', ['admin'])->plainTextToken;
 
         return response()->json([
             'message' => 'Impersonation ended',
             'token' => $token,
-            'user' => $admin->only('id', 'name', 'email'),
+            'user' => $admin->only('id', 'name', 'email', 'role'),
         ]);
     }
 }
