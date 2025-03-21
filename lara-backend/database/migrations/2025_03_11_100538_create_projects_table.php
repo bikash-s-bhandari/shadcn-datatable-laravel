@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->text('name');
+
+            $table->unsignedBigInteger('user_id');//this is actual manager id
+
             $table->unsignedBigInteger('project_manager_id');
             $table->enum('status', \App\Enums\ProjectStatus::values())->default(\App\Enums\ProjectStatus::ON_TRACK->value);
 
@@ -27,6 +30,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('project_manager_id')->references('id')->on('project_managers')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

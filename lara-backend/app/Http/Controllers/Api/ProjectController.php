@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -47,15 +48,21 @@ class ProjectController extends Controller
             $sorting = $request->input('sorting', []);
             $filters = $request->input('filters', []);
 
+            $user = Auth::user();
+
             // Build the query
             $query = Project::query()
                 ->with('projectManager:id,name,email')
                 ->leftJoin('project_managers as pm', 'projects.project_manager_id', '=', 'pm.id')
                 ->select('projects.*', 'pm.name as project_manager_name');
 
-                // Apply filters
+            if ($user->role === 'manager') {
+                $query->where('projects.user_id', $user->id);
+            }
+
+            // Apply filters
             foreach ($filters as $filter) {
-                if ($filter['id'] === 'status') {
+                if ($filter['id'] === 'status' && $filter['value']!=='all') {
                     $query->where('projects.status', $filter['value']);
                 }
             }

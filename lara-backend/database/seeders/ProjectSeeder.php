@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use App\Models\Project;
 use App\Models\ProjectManager;
@@ -14,6 +15,7 @@ class ProjectSeeder extends Seeder
     {
         $faker = Faker::create();
         $managers = ProjectManager::all();
+        $users=User::where('role','manager')->get();
 
         if ($managers->isEmpty()) {
             $this->command->info('No project managers found. Please seed ProjectManagerSeeder first.');
@@ -23,6 +25,7 @@ class ProjectSeeder extends Seeder
         for ($i = 0; $i < 100; $i++) {
             Project::create([
                 'name' => $faker->sentence(3),
+                'user_id'=>$users->random()->id,
                 'project_manager_id' => $managers->random()->id,
                 'status' => $faker->randomElement(ProjectStatus::values()),
                 'start_date' => $faker->date(),
