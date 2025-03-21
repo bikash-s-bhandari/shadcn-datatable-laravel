@@ -3,7 +3,7 @@
 import React from "react";
 import { DataTable } from "@/components/data-table";
 import TopHeader from "@/components/data-table/Header";
-import { columns } from "../columns";
+import { columns } from "@/app/columns";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectService } from "@/services";
 import { useQueryState } from "nuqs";

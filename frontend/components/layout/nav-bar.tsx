@@ -9,22 +9,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useSession, signOut } from "next-auth/react";
 import { LOGOUT_URL } from "@/lib/apiEndpoints";
 import apiClient from "@/lib/api-client";
-import {authService} from "@/lib/api-client";
+import { authService } from "@/lib/api-client";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { data,update } = useSession();
+  const { data, update } = useSession();
+  const router = useRouter();
 
   if (!data) return null;
-
-  const user = {
-    name: "padam khanal",
-    role: "manager",
-  };
-
-  const originalUser = {
-    name: "bikash",
-    role: "admin",
-  };
 
   const onLogout = async () => {
     apiClient
@@ -38,19 +30,21 @@ export default function Header() {
   };
 
   const handleStopImpersonation = async () => {
-      const { token, user } = await authService.stopImpersonation();
-      
-      await update({
-        accessToken: token,
-        user: user,
-        isImpersonating: false,
-        originalUser: null
-      });
-    };
+    const { token, user } = await authService.stopImpersonation();
+
+    await update({
+      accessToken: token,
+      user: user,
+      isImpersonating: false,
+      originalUser: null,
+    });
+  };
 
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-md">
-      <h1 className="text-xl font-semibold">My App</h1>
+      <h1 className="text-xl font-semibold">
+        <span onClick={() => router.push("/dashboard")}>My App</span>
+      </h1>
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">

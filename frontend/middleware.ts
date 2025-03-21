@@ -11,16 +11,17 @@ export default withAuth(function middleware(req) {
 
   // Allow access to /dashboard for admin and manager
   if (req.nextUrl.pathname.startsWith("/dashboard")) {
+    // console.log({user})
     if (user.role !== "admin" && user.role !== "manager") {
       // Redirect to 401 Unauthorized page if the user doesn't have admin or manager role
-      return NextResponse.redirect(new URL("/401", req.url));
+      // return NextResponse.redirect(new URL("/401", req.url));
     }
   }
   
   // Restrict access to /dashboard/user to admin only
-  if (req.nextUrl.pathname === "/dashboard/user" && user.role !== "admin") {
-    return NextResponse.redirect(new URL("/401", req.url));
-  }
+  // if (req.nextUrl.pathname === "/dashboard/user" && user.role !== "admin") {
+  //   return NextResponse.redirect(new URL("/401", req.url));
+  // }
 
   // Allow the request to continue if the role and route are correct
   return NextResponse.next();

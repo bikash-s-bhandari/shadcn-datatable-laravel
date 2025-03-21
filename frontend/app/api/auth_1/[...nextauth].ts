@@ -31,6 +31,7 @@ export const authOptions = {
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      console.log({user},'here')
       if (user) {
         return {
           ...token,
@@ -41,12 +42,15 @@ export const authOptions = {
           originalUser: user.originalUser,
         };
       }
+
+      console.log('call')
       if (trigger === 'update' && session?.accessToken) {
         return { ...token, ...session };
       }
       return token;
     },
     async session({ session, token }) {
+     
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.isImpersonating = token.isImpersonating;

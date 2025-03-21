@@ -1,18 +1,25 @@
 // pages/login.js (or app/login/page.js)
 "use client"; // Required for App Router if using client-side features
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,6 +59,10 @@ export default function LoginPage() {
       setError("Invalid credentials");
     }
   };
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

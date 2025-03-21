@@ -3,17 +3,21 @@
 import React, { useState, useEffect } from "react";
 
 import { MANAGER_LIST_URL } from "@/lib/apiEndpoints";
-import myAxios from "@/lib/axios.config";
+import apiClient from "@/lib/api-client";
+import { authService } from "@/lib/api-client";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const ManagerList = () => {
+  const { data, update } = useSession();
   const [managers, setManagers] = useState([]);
+  const router = useRouter();
 
   const fetchManagers = () => {
-    myAxios
+    apiClient
       .get(MANAGER_LIST_URL)
       .then((res) => {
-       
         setManagers(res.data?.data?.managers);
       })
       .catch((err) => {
@@ -22,8 +26,20 @@ const ManagerList = () => {
   };
 
   useEffect(() => {
-    fetchManagers()
+    fetchManagers();
   }, []);
+
+  const handleStartImpersonation = async (managerId: string) => {
+    const { token, manager } = await authService.startImpersonation(managerId);
+    
+    await update({
+      accessToken: token,
+      user: manager,
+      isImpersonating: true,
+      originalUser: data?.user,
+    });
+     router.push("/dashboard");
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -62,12 +78,9 @@ const ManagerList = () => {
                   {manager.role}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-800">
-                  <button className="text-blue-500 hover:text-blue-700">
-                    Edit
-                  </button>
-                  <button className="ml-4 text-red-500 hover:text-red-700">
+                  <Button onClick={() => handleStartImpersonation(manager?.id)}>
                     Login As
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
