@@ -39,8 +39,10 @@ export const authService = {
     });
     return response.data;
   },
-  stopImpersonation: async () => {
-    const response = await apiClient.post("/impersonate/stop");
+  stopImpersonation: async (impersonatorId: number) => {
+    const response = await apiClient.post("/impersonate/stop", {
+      impersonatorId,
+    });
     return response.data;
   },
 };

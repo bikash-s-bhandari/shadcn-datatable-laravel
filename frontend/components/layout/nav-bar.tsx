@@ -30,7 +30,7 @@ export default function Header() {
   };
 
   const handleStopImpersonation = async () => {
-    const { token, user } = await authService.stopImpersonation();
+    const { token, user } = await authService.stopImpersonation(data?.originalUser?.id);
 
     await update({
       accessToken: token,
