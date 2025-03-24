@@ -35,26 +35,15 @@ Route::prefix('auth')->group(function () {
     Route::get('/check', [AuthController::class, 'checkAuth'])->middleware('auth:sanctum');
 });
 
-
-
-
-
 Route::middleware(['auth:sanctum'])->prefix('impersonate')->group(function () {
     Route::post('/start', [ImpersonationController::class, 'start'])
-        ->middleware(['auth:sanctum', 'admin']); // Only for admin
+        ->middleware(['admin','throttle:3,1440']); // Only for admin
 
     Route::post('/stop', [ImpersonationController::class, 'stop'])
-        ->middleware(['auth:sanctum', 'impersonate']); // For impersonated users
+        ->middleware(['impersonate']); // For impersonated users
 });
-
-
-
-
 
 Route::post("/auth/login", [AuthController::class, 'login']);
 Route::post("/auth/register", [AuthController::class, 'register']);
 
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/impersonate/{userId}', [ImpersonateController::class, 'startImpersonation']);
-// });

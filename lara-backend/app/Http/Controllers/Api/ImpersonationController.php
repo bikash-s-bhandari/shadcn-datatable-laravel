@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Impersonation;
 
 class ImpersonationController extends Controller
 {
@@ -35,7 +36,11 @@ class ImpersonationController extends Controller
         ])->plainTextToken;
 
 
-
+        Impersonation::create([
+            'impersonator_id' => auth()->id(),
+            'impersonating_id' => $manager->id,
+            'impersonated_at' => now(),
+        ]);
 
         return response()->json([
             'token' => $token,
@@ -45,17 +50,32 @@ class ImpersonationController extends Controller
 
     public function stop(Request $request)
     {
-        $impersonation = $request->session()->get('impersonation');
+        // $impersonation = $request->session()->get('impersonation');
+
+        $impersonation = Impersonation::where(
+            'impersonator_id',
+            $request->impersonatorId
+        )
+            ->whereNull('left_at')
+            ->latest()
+            ->firstOrFail();
+
+        info(json_encode($impersonation));
 
         if (!$impersonation) {
             abort(403, 'No active impersonation session');
         }
 
+        $impersonation->update(['left_at' => now()]);
+        $request->user()->currentAccessToken()->delete();
+
+
+
         // Get original admin user
-        $admin = User::findOrFail($impersonation['admin_id']);
+        $admin = User::findOrFail($impersonation->impersonator_id);
 
         // Clear impersonation session
-        $request->session()->forget('impersonation');
+        // $request->session()->forget('impersonation');
 
         // Create new admin token
         $token = $admin->createToken('admin-token', ['admin'])->plainTextToken;
