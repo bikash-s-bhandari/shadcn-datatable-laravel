@@ -6,43 +6,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { signOut, useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { LOGOUT_URL } from "@/lib/apiEndpoints";
-import myAxios from "@/lib/axios.config";
+import apiClient from "@/lib/api-client";
+import { authService } from "@/lib/api-client";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { data } = useSession();
-  console.log({ data });
-  const user = {
-    name: "padam khanal",
-    role: "manager",
-  };
+  const { data, update } = useSession();
+  const router = useRouter();
 
-  const originalUser = {
-    name: "bikash",
-    role: "admin",
-  };
+  if (!data) return null;
 
   const onLogout = async () => {
-    myAxios
-      .post(
-        LOGOUT_URL,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${data?.user?.token}`,
-          },
-        }
-      )
-      .then((res) => {})
+    apiClient
+      .post(LOGOUT_URL, {})
+      .then((res) => {
+        signOut();
+      })
       .catch((err) => {
         console.error("Something went wrong.Please try again!");
       });
   };
 
+  const handleStopImpersonation = async () => {
+    const { token, user } = await authService.stopImpersonation(data?.originalUser?.id);
+
+    await update({
+      accessToken: token,
+      user: user,
+      isImpersonating: false,
+      originalUser: null,
+    });
+  };
+
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-md">
-      <h1 className="text-xl font-semibold">My App</h1>
+      <h1 className="text-xl font-semibold">
+        <span onClick={() => router.push("/dashboard")}>My App</span>
+      </h1>
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
@@ -56,14 +58,22 @@ export default function Header() {
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white text-black p-2 rounded-md shadow-lg">
-            {originalUser && originalUser.name !== user.name && (
+            {data?.isImpersonating && (
               <DropdownMenuItem className="cursor-default">
                 Logged in as {data?.user?.name}
               </DropdownMenuItem>
             )}
-            {originalUser && (
+            {data?.isImpersonating && (
+              <DropdownMenuItem
+                onClick={() => handleStopImpersonation()}
+                className="cursor-default"
+              >
+                Stop Impersonating
+              </DropdownMenuItem>
+            )}
+            {data?.originalUser && (
               <DropdownMenuItem className="cursor-default">
-                Original: {originalUser.name}
+                Original: {data?.originalUser?.name}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem

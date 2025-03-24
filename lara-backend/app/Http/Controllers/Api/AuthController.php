@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Log;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -30,7 +31,7 @@ class AuthController extends Controller
     }
 
     // * Login user
-    public function login(Request $request)
+    public function login1(Request $request)
     {
         $payload = $request->validate([
             "email" => "required|email",
@@ -58,7 +59,7 @@ class AuthController extends Controller
     }
 
     // * Logout
-    public function logout(Request $request)
+    public function logout1(Request $request)
     {
         try {
             $request->user()->currentAccessToken()->delete();
@@ -67,5 +68,52 @@ class AuthController extends Controller
             Log::info("user_logout_err =>" . $err->getMessage());
             return response()->json(["status" => 500, "message" => "Something went wrong!"], 500);
         }
+    }
+
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $user = $request->user();
+        $token = $user->createToken('auth-token', [
+            $user->isAdmin() ? 'admin' : 'manager',
+            'basic-access',
+        ])->plainTextToken;
+
+        if ($user->isAdmin()) {
+            // $user->logAdminAccess();
+        }
+
+        return response()->json([
+            'user' => $user->only('id', 'name', 'email', 'role'),
+            'token' => $token,
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
+    }
+
+    public function checkAuth(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user()->only('id', 'name', 'email', 'role'),
+            'is_impersonating' => $request->user()->currentAccessToken()->can('impersonated'),
+        ]);
     }
 }

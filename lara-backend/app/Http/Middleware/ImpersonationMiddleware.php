@@ -15,10 +15,9 @@ class ImpersonationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->currentAccessToken()->can('impersonated')) {
-            // Add headers for frontend to detect impersonation
-            $response = $next($request);
-            return $response->header('X-Impersonating', 'true');
+        // Verify token has impersonation scope
+        if (!$request->user()->currentAccessToken()->can('impersonated')) {
+            abort(403, 'Not in impersonation mode');
         }
 
         return $next($request);

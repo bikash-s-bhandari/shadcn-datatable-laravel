@@ -20,18 +20,30 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::prefix('impersonate')->group(function () {
+// Protected example route
+// Route::middleware('auth:sanctum')->get('/projects', function (Request $request) {
+//     if ($request->user()->currentAccessToken()->can('manager:access')) {
+//         return $request->user()->projects;
+//     }
+
+//     return response()->json(['message' => 'Unauthorized'], 403);
+// });
+
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('/check', [AuthController::class, 'checkAuth'])->middleware('auth:sanctum');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('impersonate')->group(function () {
     Route::post('/start', [ImpersonationController::class, 'start'])
-        ->middleware(['auth:sanctum', 'admin']);
+        ->middleware(['admin','throttle:3,1440']); // Only for admin
 
     Route::post('/stop', [ImpersonationController::class, 'stop'])
-        ->middleware(['auth:sanctum', 'impersonate']);
+        ->middleware(['impersonate']); // For impersonated users
 });
 
 Route::post("/auth/login", [AuthController::class, 'login']);
 Route::post("/auth/register", [AuthController::class, 'register']);
 
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/impersonate/{userId}', [ImpersonateController::class, 'startImpersonation']);
-// });
